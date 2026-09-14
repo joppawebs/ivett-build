@@ -84,8 +84,10 @@ const DEFAULT_LAYER = 'walls';
               <Image
                 src={p.image}
                 alt={p.alt}
-                width={1200}
-                widths={[600, 1200]}
+                width={1216}
+                height={570}
+                fit="cover"
+                widths={[608, 1216]}
                 sizes="(min-width: 900px) 46vw, 92vw"
               />
             </a>
@@ -292,7 +294,10 @@ const DEFAULT_LAYER = 'walls';
   /* ---------- work ---------- */
   .m3 .work-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:48px 64px}
   .m3 .case{display:grid;gap:20px;align-content:start}
-  .m3 .case img{width:100%;aspect-ratio:16/10;object-fit:cover}
+  /* 32:15 — a quarter shorter than 16:10. Both photographs centre-crop to it
+     cleanly: the building stays whole and only sky and ground are lost. Cut at
+     build time, so the browser has nothing left to crop. */
+  .m3 .case img{width:100%;aspect-ratio:32/15;object-fit:cover}
   .m3 .case-head{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start}
   .m3 .case-head h3{margin-top:6px;font-size:clamp(28px,2.6vw,38px)}
   .m3 .case-figs{font-family:var(--mono);font-size:13px;text-align:right;color:#5B6B7D;line-height:1.7}
