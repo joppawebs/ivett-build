@@ -2,12 +2,23 @@
 import '../styles/global.css';
 import { SITE } from '../config';
 
+export type FontSet = 'sans' | 'display' | 'mono';
+
 export interface Props {
   title?: string;
   description?: string;
-  /** Path only, e.g. "/contact/". Combined with `Astro.site` for canonical + og:url. */
+  /** Path only, e.g. "/mockup-2/". Combined with `Astro.site` for canonical + og:url. */
   path?: string;
   ogImage?: string;
+  /**
+   * Which self-hosted faces this page actually uses. Only these are preloaded,
+   * so a mockup never pays for a font it doesn't set.
+   */
+  fonts?: FontSet[];
+  /** Browser UI colour — matched to each mockup's header. */
+  themeColor?: string;
+  /** Class applied to <body>, used to scope each mockup's styles. */
+  bodyClass?: string;
 }
 
 const {
@@ -15,11 +26,21 @@ const {
   description = SITE.description,
   path = Astro.url.pathname,
   ogImage = SITE.ogImage,
+  fonts = [],
+  themeColor,
+  bodyClass,
 } = Astro.props;
 
 const siteUrl = Astro.site ?? new URL(SITE.url);
 const canonical = new URL(path, siteUrl).href;
 const ogImageUrl = new URL(ogImage, siteUrl).href;
+
+const PRELOADS: Record<FontSet, string[]> = {
+  sans: ['/fonts/public-sans-latin.woff2'],
+  display: ['/fonts/bricolage-grotesque-latin.woff2'],
+  mono: ['/fonts/jetbrains-mono-400-latin.woff2', '/fonts/jetbrains-mono-500-latin.woff2'],
+};
+const preload = fonts.flatMap((f) => PRELOADS[f]);
 ---
 
 <!DOCTYPE html>
@@ -28,6 +49,11 @@ const ogImageUrl = new URL(ogImage, siteUrl).href;
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content={description}>
+{/* This is a private client review site, not ivettbuild.com. It must never be
+    indexed: the content is the client's, and a duplicate would compete with
+    their live site. Reinforced by robots.txt. */}
+<meta name="robots" content="noindex, nofollow">
+{themeColor && <meta name="theme-color" content={themeColor} />}
 <link rel="canonical" href={canonical}>
 <meta property="og:type" content="website">
 <meta property="og:url" content={canonical}>
@@ -40,16 +66,13 @@ const ogImageUrl = new URL(ogImage, siteUrl).href;
 <meta name="twitter:description" content={description}>
 <meta name="twitter:image" content={ogImageUrl}>
 <title>{title}</title>
-<link rel="preload" href="/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/fonts/figtree-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/fonts/instrument-serif-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/fonts/ibm-plex-mono-400-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/fonts/ibm-plex-mono-500-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/fonts/ibm-plex-mono-600-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="sitemap" type="application/xml" href="/sitemap.xml">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+{preload.map((href) => (
+  <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />
+))}
 <slot name="head" />
 </head>
-<body>
+<body class={bodyClass}>
 <slot />
 </body>
 </html>

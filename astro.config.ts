@@ -11,8 +11,9 @@ export default defineConfig({
   output: 'static',
   adapter: cloudflare({
     platformProxy: { enabled: true },
-    // Images are served via plain <img>; we never run them through Astro's
-    // <Image>, so skip image processing (no sharp warning).
-    imageService: 'passthrough',
+    // Every page here is prerendered, so images are resized and converted to
+    // WebP by sharp at build time and served as plain static files. No image
+    // work — and no image cost — at runtime.
+    imageService: 'compile',
   }),
 });

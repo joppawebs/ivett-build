@@ -1,0 +1,236 @@
+---
+/**
+ * The site header, in three skins.
+ *
+ * All three directions use the same structure — logo, nav with submenus,
+ * right-hand actions, and a full-screen menu below the desktop breakpoint —
+ * so the markup and behaviour live here once and each variant restyles it.
+ * Behaviour comes from src/scripts/nav.ts via the data-nav-* attributes.
+ */
+import { NAV_ITEMS, COMPANY } from '../data/ivett';
+
+export interface Props {
+  /** 1 = Evolution, 2 = Bold orange, 3 = Slate. */
+  variant: 1 | 2 | 3;
+  /** Width at which the desktop nav replaces the burger. */
+  desktopFrom: number;
+}
+const { variant, desktopFrom } = Astro.props;
+---
+
+<header class:list={['hd', `hd-${variant}`]} data-nav data-nav-desktop={desktopFrom}>
+  <div class="hd-in">
+    <a class="hd-logo" href="#top" aria-label={`${COMPANY.legalName} — home`}>
+      <img src="/logo.svg" alt="Ivett Design + Build" width="92" height="48" />
+      {variant === 3 && <span class="hd-tagline">FARNHAM · SURREY · EST 2018</span>}
+    </a>
+
+    <nav class="hd-nav" aria-label="Main">
+      {NAV_ITEMS.map((item) =>
+        'children' in item ? (
+          <div class="hd-item" data-nav-item>
+            <a class="hd-link" href={item.href} data-nav-toggle aria-expanded="false">
+              {item.label}<span class="hd-caret" aria-hidden="true">▾</span>
+            </a>
+            <div class="hd-panel" data-nav-panel hidden>
+              {item.children.map((child) => (
+                <a class="hd-sub" href={child.href}>
+                  {child.label}<span class="hd-note">{child.note}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div class="hd-item">
+            <a class="hd-link" href={item.href}>{item.label}</a>
+          </div>
+        )
+      )}
+    </nav>
+
+    <div class="hd-actions"><slot name="actions" /></div>
+
+    <button class="hd-burger" type="button" data-menu-open aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <div class="hd-menu" data-menu hidden>
+    <div class="hd-menu-top">
+      <img src="/logo.svg" alt="" width="92" height="48" />
+      <button class="hd-menu-close" type="button" data-menu-close aria-label="Close menu">&times;</button>
+    </div>
+    <nav class="hd-menu-nav" aria-label="Main, mobile">
+      {NAV_ITEMS.map((item) =>
+        'children' in item ? (
+          <div class="hd-menu-row" data-nav-item>
+            <div class="hd-menu-head">
+              <a class="hd-menu-link" href={item.href}>{item.label}</a>
+              <button
+                class="hd-menu-expand"
+                type="button"
+                data-nav-toggle
+                aria-expanded="false"
+                aria-label={`Show ${item.label}`}
+              >▾</button>
+            </div>
+            <div class="hd-menu-panel" data-nav-panel hidden>
+              {item.children.map((child) => (
+                <a class="hd-menu-sub" href={child.href}>
+                  {child.label}<span class="hd-note">{child.note}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div class="hd-menu-row">
+            <div class="hd-menu-head"><a class="hd-menu-link" href={item.href}>{item.label}</a></div>
+          </div>
+        )
+      )}
+      <a class="hd-menu-cta" href="#contact">Enquire</a>
+      <div class="hd-menu-contact">
+        <a href={COMPANY.phoneHref}>{COMPANY.phone}</a>
+        <a href={`mailto:${COMPANY.salesEmail}`}>{COMPANY.salesEmail}</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  /* ---------- structure, shared by all three ---------- */
+  .hd-in{
+    margin:0 auto;display:flex;align-items:center;justify-content:space-between;
+    gap:24px;max-width:var(--hd-max);padding:0 var(--hd-pad);height:var(--hd-h);
+  }
+  .hd-logo{display:inline-flex;align-items:center;gap:14px}
+  .hd-logo img{height:var(--hd-logo);width:auto}
+  .hd-nav{display:none;align-items:center;gap:28px}
+  .hd-item{position:relative}
+  .hd-link{
+    display:inline-flex;align-items:center;gap:6px;min-height:44px;
+    white-space:nowrap;cursor:pointer;
+  }
+  .hd-link:hover{color:var(--orange)}
+  .hd-caret{font-size:10px;line-height:1}
+  .hd-item:not([data-nav-item]) .hd-caret{display:none}
+  .hd-panel{
+    position:absolute;top:100%;left:-16px;min-width:264px;padding:8px 0;
+    display:grid;z-index:5;font-size:15px;font-weight:500;
+    text-transform:none;letter-spacing:0;
+  }
+  .hd-panel[hidden]{display:none}
+  .hd-sub{display:block;padding:10px 16px}
+  .hd-sub:hover{color:var(--orange)}
+  .hd-note{display:block;font-size:13px;font-weight:400;opacity:.7}
+  .hd-actions{display:none;align-items:center;gap:24px}
+  .hd-burger{
+    width:44px;height:44px;background:none;border:0;padding:0;cursor:pointer;
+    display:grid;place-content:center;gap:6px;
+  }
+  .hd-burger span{display:block;width:24px;height:2px;background:currentColor}
+
+  @media (min-width: 900px){
+    .hd-2 .hd-nav,.hd-3 .hd-nav,.hd-2 .hd-actions,.hd-3 .hd-actions{display:flex}
+    .hd-2 .hd-burger,.hd-3 .hd-burger{display:none}
+  }
+  @media (min-width: 960px){
+    .hd-1 .hd-nav,.hd-1 .hd-actions{display:flex}
+    .hd-1 .hd-burger{display:none}
+  }
+
+  /* ---------- the full-screen menu ---------- */
+  .hd-menu{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;overflow-y:auto}
+  .hd-menu[hidden]{display:none}
+  .hd-menu-top{
+    display:flex;align-items:center;justify-content:space-between;flex:none;
+    padding:0 20px;height:var(--hd-h);
+  }
+  .hd-menu-top img{height:var(--hd-logo);width:auto}
+  .hd-menu-close{
+    width:44px;height:44px;background:none;border:0;padding:0;cursor:pointer;
+    font-size:28px;line-height:1;
+  }
+  .hd-menu-nav{padding:8px 20px 32px;display:grid;align-content:start;flex:1}
+  .hd-menu-head{display:flex;align-items:center;justify-content:space-between}
+  .hd-menu-link{flex:1;padding:16px 0;letter-spacing:-.01em}
+  .hd-menu-expand{
+    width:44px;height:44px;background:none;border:0;padding:0;cursor:pointer;
+    font-size:18px;transition:transform .2s ease;
+  }
+  .hd-menu-row[data-open='true'] .hd-menu-expand{transform:rotate(180deg)}
+  .hd-menu-panel{display:grid;padding-bottom:12px}
+  .hd-menu-panel[hidden]{display:none}
+  .hd-menu-sub{padding:10px 0 10px 16px;font-size:17px;font-weight:500}
+  .hd-menu-cta{
+    margin-top:24px;min-height:52px;display:inline-flex;align-items:center;
+    justify-content:center;font-weight:700;font-size:16px;
+  }
+  .hd-menu-contact{display:grid;gap:4px;margin-top:20px;font-size:16px}
+  .hd-menu-contact a{min-height:44px;display:inline-flex;align-items:center}
+
+  /* ======================================================================
+     1 — Evolution: white sticky bar, logo in the orange block
+     ====================================================================== */
+  .hd-1{
+    --hd-max:1320px; --hd-pad:clamp(20px,4vw,48px); --hd-h:80px; --hd-logo:34px;
+    position:sticky;top:0;z-index:40;background:#fff;color:var(--char);
+    border-bottom:1px solid #E6E4E1;
+  }
+  .hd-1 .hd-logo{background:var(--orange);padding:10px 12px}
+  .hd-1 .hd-nav{font-size:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+  .hd-1 .hd-panel{background:#fff;box-shadow:0 12px 32px rgba(0,0,0,.12)}
+  .hd-1 .hd-sub{border-bottom:1px solid #EDECEA}
+  .hd-1 .hd-menu{background:#fff;color:var(--char)}
+  .hd-1 .hd-menu-top{border-bottom:1px solid #E6E4E1}
+  .hd-1 .hd-menu-top img{background:var(--orange);padding:10px 12px;box-sizing:content-box}
+  .hd-1 .hd-menu-row{border-bottom:1px solid #E6E4E1}
+  .hd-1 .hd-menu-link{font-size:24px;font-weight:700}
+  .hd-1 .hd-menu-sub{border-left:2px solid #E6E4E1}
+  .hd-1 .hd-menu-sub .hd-note{color:var(--rv-dim)}
+  .hd-1 .hd-menu-cta{background:var(--orange);color:#fff}
+  .hd-1 .hd-menu-contact{color:var(--rv-dim)}
+
+  /* ======================================================================
+     2 — Bold orange: transparent, sitting over the hero video
+     ====================================================================== */
+  .hd-2{
+    --hd-max:1400px; --hd-pad:clamp(20px,4vw,56px); --hd-h:92px; --hd-logo:48px;
+    position:absolute;top:0;left:0;right:0;z-index:40;color:#fff;
+  }
+  .hd-2 .hd-nav{font-size:15px;font-weight:500}
+  .hd-2 .hd-panel{background:var(--char-deep);box-shadow:0 12px 32px rgba(0,0,0,.4)}
+  .hd-2 .hd-sub{border-bottom:1px solid var(--char)}
+  .hd-2 .hd-menu{background:var(--char-deep);color:#F2F0ED}
+  .hd-2 .hd-menu-top{border-bottom:1px solid var(--char)}
+  .hd-2 .hd-menu-row{border-bottom:1px solid var(--char)}
+  .hd-2 .hd-menu-link{font-size:30px;font-weight:700;letter-spacing:-.03em}
+  .hd-2 .hd-menu-sub{border-left:2px solid var(--char)}
+  .hd-2 .hd-menu-sub .hd-note{color:#B5B2AE}
+  .hd-2 .hd-menu-cta{background:var(--orange);color:var(--char-deep)}
+  .hd-2 .hd-menu-contact{color:#B5B2AE}
+
+  /* ======================================================================
+     3 — Slate: solid slate bar above the hero
+     ====================================================================== */
+  .hd-3{
+    --hd-max:1400px; --hd-pad:clamp(20px,4vw,56px); --hd-h:72px; --hd-logo:36px;
+    position:relative;z-index:40;background:var(--slate);color:#EEF0F2;
+  }
+  .hd-3 .hd-tagline{
+    display:none;font-family:var(--mono);font-size:12px;letter-spacing:.04em;
+    color:#8FA0B3;border-left:1px solid #34435A;padding-left:14px;white-space:nowrap;
+  }
+  @media (min-width: 1100px){ .hd-3 .hd-tagline{display:inline} }
+  .hd-3 .hd-nav{font-size:15px;font-weight:500}
+  .hd-3 .hd-panel{background:var(--slate);box-shadow:0 12px 32px rgba(0,0,0,.4)}
+  .hd-3 .hd-sub{border-bottom:1px solid #34435A}
+  .hd-3 .hd-menu{background:var(--slate);color:#EEF0F2}
+  .hd-3 .hd-menu-top{border-bottom:1px solid #34435A}
+  .hd-3 .hd-menu-row{border-bottom:1px solid #34435A}
+  .hd-3 .hd-menu-link{font-size:28px;font-weight:600;letter-spacing:-.03em}
+  .hd-3 .hd-menu-sub{border-left:2px solid #34435A}
+  .hd-3 .hd-menu-sub .hd-note{color:#8FA0B3}
+  .hd-3 .hd-menu-cta{background:var(--orange);color:var(--slate)}
+  .hd-3 .hd-menu-contact{color:#8FA0B3}
+</style>

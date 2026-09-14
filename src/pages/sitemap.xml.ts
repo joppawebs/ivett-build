@@ -1,11 +1,14 @@
 import type { APIRoute } from 'astro';
-import { SITE } from '../config';
+import { SITE, MOCKUPS } from '../config';
 
-// Prerendered to a static /sitemap.xml at build time. Add new routes here as
-// you build out the site.
+/**
+ * Prerendered to a static /sitemap.xml. Kept wired up so the mechanism is in
+ * place for the real build; note that robots.txt disallows this preview and
+ * doesn't advertise it, because a review site should not be crawled.
+ */
 export const GET: APIRoute = ({ site }) => {
   const base = site ?? new URL(SITE.url);
-  const paths = ['/', '/privacy/'];
+  const paths = [...MOCKUPS.map((m) => m.path), '/privacy/'];
   const urls = paths
     .map((p) => `  <url><loc>${new URL(p, base).href}</loc></url>`)
     .join('\n');

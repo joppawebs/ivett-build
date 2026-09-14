@@ -1,0 +1,58 @@
+---
+/**
+ * Review chrome: a small fixed bar that lets the client move between the three
+ * directions. Deliberately system-font and monochrome so it reads as a viewer
+ * control, not as part of whichever mockup is on screen. Dismissible — the
+ * choice is remembered for the tab so a full-screen look stays full-screen.
+ */
+import { MOCKUPS } from '../config';
+
+export interface Props {
+  /** Which mockup is showing (1, 2 or 3). */
+  current: number;
+}
+const { current } = Astro.props;
+---
+
+<div class="rv-bar" id="rv-bar" aria-label="Homepage directions">
+  <span class="rv-bar-label">Direction</span>
+  <nav class="rv-bar-links">
+    {MOCKUPS.map((m) => (
+      <a
+        href={m.path}
+        aria-current={m.n === current ? 'page' : undefined}
+        title={`Mockup ${m.n} — ${m.name}: ${m.blurb}`}
+      >
+        <span class="rv-bar-n">{m.n}</span>
+        <span class="rv-bar-name">{m.name}</span>
+      </a>
+    ))}
+  </nav>
+  <button type="button" class="rv-bar-close" id="rv-bar-close" aria-label="Hide the direction switcher">&times;</button>
+</div>
+
+<button type="button" class="rv-peek" id="rv-peek" hidden aria-label="Show the direction switcher">1&#8203;2&#8203;3</button>
+
+<script>
+  const KEY = 'rv-bar-hidden';
+  const bar = document.getElementById('rv-bar');
+  const peek = document.getElementById('rv-peek');
+  const close = document.getElementById('rv-bar-close');
+
+  // sessionStorage can throw in private modes — never let it break the page.
+  const read = () => {
+    try { return sessionStorage.getItem(KEY) === '1'; } catch { return false; }
+  };
+  const write = (v: boolean) => {
+    try { sessionStorage.setItem(KEY, v ? '1' : '0'); } catch { /* ignore */ }
+  };
+
+  const apply = (hidden: boolean) => {
+    if (bar) bar.hidden = hidden;
+    if (peek) peek.hidden = !hidden;
+  };
+
+  apply(read());
+  close?.addEventListener('click', () => { apply(true); write(true); });
+  peek?.addEventListener('click', () => { apply(false); write(false); });
+</script>

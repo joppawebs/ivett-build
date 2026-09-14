@@ -17,6 +17,10 @@ dist/
 # claude code local settings (personal, not shared)
 .claude/settings.local.json
 
+# the client design brief: 42 MB of source material plus the draft email.
+# Kept on disk for reference, out of the repo and out of the deploy.
+design-brief/
+
 # logs & misc
 *.log
 .DS_Store

@@ -1,132 +1,185 @@
 ---
-// Reusable enquiry form. Posts to /api/contact (see src/pages/api/contact.ts),
-// which emails via Postmark. Spam handled by a honeypot + Cloudflare Turnstile.
-//
-// Portable across sites: copy this component, the API route, and the env vars.
-// PUBLIC_TURNSTILE_SITE_KEY is exposed to the browser (that's expected for
-// Turnstile). The matching secret lives only on the server.
-//
-// Falls back to Cloudflare's "always passes" test key so local dev works before
-// real keys are configured. https://developers.cloudflare.com/turnstile/troubleshooting/testing/
+/**
+ * The enquiry form — the reusable backbone, shared by all three mockups.
+ *
+ * Posts to /api/contact (Postmark) with a honeypot + Cloudflare Turnstile in
+ * front of it. The markup carries stable `f-*` class names and each mockup
+ * styles them from its own page stylesheet, so the same form can look like
+ * three different designs without three copies of the logic.
+ *
+ * PUBLIC_TURNSTILE_SITE_KEY is exposed to the browser (expected for Turnstile);
+ * the matching secret stays server-side. With no key configured, this falls
+ * back to Cloudflare's "always passes" test key — which is the state this
+ * review site ships in, so a submission reaches the endpoint and then reports
+ * that email isn't set up. That's intended: it's a mockup.
+ */
+import { COMPANY } from '../data/ivett';
+
 const TURNSTILE_TEST_SITE_KEY = '1x00000000000000000000AA';
-const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? TURNSTILE_TEST_SITE_KEY;
+const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || TURNSTILE_TEST_SITE_KEY;
+
+export interface Props {
+  /** Render First name + Last name instead of a single Name field. */
+  splitName?: boolean;
+  nameLabel?: string;
+  messageLabel?: string;
+  messagePlaceholder?: string;
+  submitLabel?: string;
+  /** Turnstile's own widget theme. */
+  turnstileTheme?: 'light' | 'dark';
+  class?: string;
+}
+
+const {
+  splitName = false,
+  nameLabel = 'Name',
+  messageLabel = 'Message',
+  messagePlaceholder = '',
+  submitLabel = 'Send enquiry',
+  turnstileTheme = 'light',
+  class: className,
+} = Astro.props;
 ---
-<div class="form-card">
-  <h3>Start the conversation</h3>
-  <p>Two minutes, and there's no commitment at this stage.</p>
 
-  <form id="contact-form" method="POST" action="/api/contact" novalidate>
-    <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+<form
+  class:list={['f-form', className]}
+  method="POST"
+  action="/api/contact"
+  novalidate
+  data-enquiry
+  data-fallback-email={COMPANY.salesEmail}
+>
+  <div class="form-status" data-form-status role="status" aria-live="polite"></div>
 
-    <div class="field-row">
-      <div class="field">
-        <label for="f-name">Your name</label>
-        <input id="f-name" name="name" type="text" autocomplete="name" placeholder="Jane Smith" required>
+  {splitName ? (
+    <>
+      <label class="f-field">
+        <span class="f-label">First name</span>
+        <input class="f-input" name="firstName" type="text" autocomplete="given-name" required />
         <span class="field-error" data-error-for="name"></span>
-      </div>
-      <div class="field">
-        <label for="f-email">Email</label>
-        <input id="f-email" name="email" type="email" autocomplete="email" placeholder="jane@business.co.uk" required>
-        <span class="field-error" data-error-for="email"></span>
-      </div>
-    </div>
+      </label>
+      <label class="f-field">
+        <span class="f-label">Last name</span>
+        <input class="f-input" name="lastName" type="text" autocomplete="family-name" />
+      </label>
+    </>
+  ) : (
+    <label class="f-field">
+      <span class="f-label">{nameLabel}</span>
+      <input class="f-input" name="name" type="text" autocomplete="name" required />
+      <span class="field-error" data-error-for="name"></span>
+    </label>
+  )}
 
-    <div class="field">
-      <label for="f-need">What do you need?</label>
-      <select id="f-need" name="need">
-        <option>A brand-new website - we don't have one yet</option>
-        <option>A redesign of our existing website</option>
-        <option>Ongoing care for our current site</option>
-        <option>Not sure yet - let's talk</option>
-      </select>
-    </div>
+  <label class:list={['f-field', splitName && 'f-field-wide']}>
+    <span class="f-label">Email</span>
+    <input class="f-input" name="email" type="email" autocomplete="email" required />
+    <span class="field-error" data-error-for="email"></span>
+  </label>
 
-    <div class="field">
-      <label for="f-site">Your current website <span style="font-weight:400;color:var(--ink-mid)">(if you have one)</span></label>
-      <input id="f-site" name="website" type="url" autocomplete="url" placeholder="https://">
-    </div>
+  <label class="f-field f-field-wide">
+    <span class="f-label">{messageLabel}</span>
+    <textarea class="f-textarea" name="message" rows="4" placeholder={messagePlaceholder}></textarea>
+    <span class="field-error" data-error-for="message"></span>
+  </label>
 
-    <div class="field">
-      <label for="f-msg">Anything else?</label>
-      <textarea id="f-msg" name="message" rows="3" placeholder="A line or two about your business and goals"></textarea>
-      <span class="field-error" data-error-for="message"></span>
-    </div>
+  {/* Honeypot: real visitors never see this; bots fill it in. */}
+  <div class="hp-field" aria-hidden="true">
+    <label for="f-company">Company (leave blank)</label>
+    <input id="f-company" name="company" type="text" tabindex="-1" autocomplete="off" />
+  </div>
 
-    <!-- Honeypot: real users never see or fill this; bots usually do. -->
-    <div class="hp-field" aria-hidden="true">
-      <label for="f-company">Company (leave blank)</label>
-      <input id="f-company" name="company" type="text" tabindex="-1" autocomplete="off">
-    </div>
+  <div class="cf-turnstile" data-sitekey={siteKey} data-theme={turnstileTheme}></div>
 
-    <div class="cf-turnstile" data-sitekey={siteKey} data-theme="light" style="margin-bottom:16px"></div>
-
-    <button class="btn btn-primary" type="submit">Send enquiry</button>
-    <p class="form-priv">We'll never share your details or add you to a list you didn't ask for.</p>
-  </form>
-</div>
+  <button class="f-submit" type="submit">{submitLabel}</button>
+</form>
 
 <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <script>
-  import { CONTACT } from '../config';
-  const form = document.getElementById('contact-form') as HTMLFormElement | null;
-  const status = document.getElementById('form-status');
+  for (const form of document.querySelectorAll<HTMLFormElement>('[data-enquiry]')) {
+    const status = form.querySelector<HTMLElement>('[data-form-status]');
+    // Carried on the element rather than imported: pulling in the content
+    // module would drag every image import into the browser bundle.
+    const fallbackEmail = form.dataset.fallbackEmail ?? '';
 
-  function setStatus(message: string, kind: 'error' | 'success') {
-    if (!status) return;
-    status.textContent = message;
-    status.className = `form-status is-${kind}`;
-  }
+    const setStatus = (message: string, kind: 'error' | 'success') => {
+      if (!status) return;
+      status.textContent = message;
+      status.className = `form-status is-${kind}`;
+    };
 
-  function clearFieldErrors() {
-    form?.querySelectorAll<HTMLElement>('.field-error').forEach((el) => (el.textContent = ''));
-    form?.querySelectorAll('[aria-invalid="true"]').forEach((el) => el.removeAttribute('aria-invalid'));
-  }
+    const clearErrors = () => {
+      form.querySelectorAll<HTMLElement>('.field-error').forEach((el) => (el.textContent = ''));
+      form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
+      if (status) { status.className = 'form-status'; status.textContent = ''; }
+    };
 
-  function showFieldErrors(errors: Record<string, string>) {
-    for (const [field, message] of Object.entries(errors)) {
-      const errorEl = form?.querySelector<HTMLElement>(`[data-error-for="${field}"]`);
-      if (errorEl) errorEl.textContent = message;
-      const input = form?.querySelector(`[name="${field}"]`);
-      input?.setAttribute('aria-invalid', 'true');
-    }
-  }
-
-  form?.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    clearFieldErrors();
-    if (status) status.className = 'form-status';
-
-    const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
-    submitBtn?.setAttribute('aria-busy', 'true');
-    const originalLabel = submitBtn?.textContent;
-    if (submitBtn) submitBtn.textContent = 'Sending…';
-
-    try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { Accept: 'application/json' },
-        body: new FormData(form),
-      });
-      const data = await response.json().catch(() => ({}));
-
-      if (response.ok && data.ok) {
-        // Hand off to the dedicated thank-you page (animated confirmation).
-        window.location.assign('/success/');
-        return;
-      } else if (data.errors) {
-        showFieldErrors(data.errors);
-        setStatus(data.message ?? 'Please check the highlighted fields and try again.', 'error');
-      } else {
-        setStatus(data.message ?? `Something went wrong sending your message. Please email ${CONTACT.email} and we’ll pick it up.`, 'error');
+    const showErrors = (errors: Record<string, string>) => {
+      for (const [field, message] of Object.entries(errors)) {
+        const target = form.querySelector<HTMLElement>(`[data-error-for="${field}"]`);
+        if (target) target.textContent = message;
+        // The split-name variant reports against "name"; point at the first input.
+        const input =
+          form.querySelector(`[name="${field}"]`) ??
+          (field === 'name' ? form.querySelector('[name="firstName"]') : null);
+        input?.setAttribute('aria-invalid', 'true');
       }
-    } catch {
-      setStatus(`Couldn’t reach the server. Please check your connection or email ${CONTACT.email}.`, 'error');
-    } finally {
-      submitBtn?.removeAttribute('aria-busy');
-      if (submitBtn && originalLabel) submitBtn.textContent = originalLabel;
-      // Reset Turnstile so the next attempt gets a fresh token.
-      (window as any).turnstile?.reset?.();
-    }
-  });
+    };
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      clearErrors();
+
+      const submit = form.querySelector<HTMLButtonElement>('[type="submit"]');
+      const label = submit?.textContent;
+      submit?.setAttribute('aria-busy', 'true');
+      if (submit) submit.textContent = 'Sending…';
+
+      const body = new FormData(form);
+      // The endpoint takes one `name`; the split variant sends two fields.
+      if (!body.get('name')) {
+        const first = (body.get('firstName') ?? '').toString().trim();
+        const last = (body.get('lastName') ?? '').toString().trim();
+        body.set('name', [first, last].filter(Boolean).join(' '));
+      }
+
+      try {
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          body,
+        });
+        const data = (await response.json().catch(() => ({}))) as {
+          ok?: boolean;
+          message?: string;
+          errors?: Record<string, string>;
+        };
+
+        if (response.ok && data.ok) {
+          window.location.assign('/success/');
+          return;
+        }
+        if (data.errors) {
+          showErrors(data.errors);
+          setStatus(data.message ?? 'Please check the highlighted fields and try again.', 'error');
+        } else {
+          setStatus(
+            data.message ?? `Something went wrong. Please email ${fallbackEmail}.`,
+            'error'
+          );
+        }
+      } catch {
+        setStatus(
+          `Couldn’t reach the server. Please check your connection or email ${fallbackEmail}.`,
+          'error'
+        );
+      } finally {
+        submit?.removeAttribute('aria-busy');
+        if (submit && label) submit.textContent = label;
+        // Fresh Turnstile token for the next attempt.
+        (window as unknown as { turnstile?: { reset?: () => void } }).turnstile?.reset?.();
+      }
+    });
+  }
 </script>

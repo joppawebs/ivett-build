@@ -1,126 +1,117 @@
-# astro-cloudflare-starter
+# ivett-build
 
-A barebones [Astro](https://astro.build) starter deployed to **Cloudflare
-Workers**, with the reusable engine already wired up:
+Three homepage directions for **Ivett Design and Build**, built as real pages so
+the client can judge them at full speed rather than from a flat image.
 
-- ⚡ Static-first Astro + Cloudflare adapter (one Worker function for the form)
-- 📨 Contact form: honeypot + [Turnstile](https://developers.cloudflare.com/turnstile/) + [Postmark](https://postmarkapp.com)
-- 🎬 Lightweight motion toolkit (GSAP + a WebGL hero), reduced-motion & no-JS safe
-- 🔎 SEO scaffolding: canonical/OG/Twitter meta, JSON-LD, dynamic `sitemap.xml` + `robots.txt`
-- 🔒 Security headers (`public/_headers`) and immutable asset caching
-- 🚀 GitHub Actions → Cloudflare deploy (uploads runtime secrets on each deploy)
-- 🔤 Self-hosted, metric-matched fonts (no layout shift)
+Live at **https://ivett.joppawebs.co.uk** — a private review site, not
+ivettbuild.com. Every page sends `noindex, nofollow` and `robots.txt` disallows
+everything (see [Indexing](#indexing) below — this matters).
 
-It ships intentionally **bare**: a Header, a Hero, a Contact section and a
-Footer — all driven from one config file. Add (or prompt an AI to add) the
-sections each client needs.
+| Route | Direction | Look |
+| --- | --- | --- |
+| `/` | **1 — Evolution** | Closest to the current site: white header, the orange logo block, orange buttons, same section order. Public Sans. |
+| `/mockup-2/` | **2 — Bold orange** | Same palette, more confident: near-black ground, a solid orange band for the figures, large display type. Bricolage Grotesque. |
+| `/mockup-3/` | **3 — Slate** | Furthest out: slate blue with orange as the only accent, and an interactive build-up panel driven by Ivett's own section drawings. Bricolage Grotesque + JetBrains Mono. |
 
-## Starting a new project from this template
+A small fixed bar at the bottom of each page moves between the three. It's
+system-font and monochrome so it never reads as part of a design, and it can be
+dismissed (the choice sticks for the tab).
 
-This template is built to run **fully inside a Docker dev container on a native
-Docker volume** (ext4/overlay), not on a bind-mounted host folder. On Windows the
-host folder is a slow 9p filesystem that breaks Astro's HMR / file-watching — the
-container-volume workflow avoids it entirely.
+## Running it
 
-> **Clone into a volume, not a plain clone.** A plain `git clone` on the host
-> puts the code on the slow filesystem. Use the command below instead.
+```bash
+npm install
+npm run dev      # http://localhost:4321
+npm run build    # static build into dist/
+npm run preview  # build + serve the Worker locally via wrangler
+```
 
-1. **"Use this template" → Create a new repository** (private) on GitHub.
-2. In VS Code, run **`Dev Containers: Clone Repository in Container Volume…`**
-   (Command Palette, `F1`) and pick your new repo. VS Code creates a named Docker
-   volume, clones into `/workspaces/<repo-name>`, and builds the container from
-   [.devcontainer/Dockerfile](.devcontainer/Dockerfile). It manages the mount
-   itself — there is deliberately **no `workspaceMount` bind** in
-   [devcontainer.json](.devcontainer/devcontainer.json).
-3. **Make the per-project edits** (all clearly marked in-file):
-   | File | Edit | Required? |
-   | --- | --- | --- |
-   | [.devcontainer/devcontainer.json](.devcontainer/devcontainer.json) | `workspaceFolder` → `/workspaces/<your-repo-name>` (the only per-clone container edit) | **Yes** |
-   | [package.json](package.json) | `"name"` → your project name | recommended |
-   | [.devcontainer/init-firewall.sh](.devcontainer/init-firewall.sh) | delete the **OPTIONAL** Cloudflare lines if you don't deploy to Cloudflare; add any API hosts your project calls | optional |
-   | [.devcontainer/devcontainer.json](.devcontainer/devcontainer.json) | delete the **OPTIONAL** `CLOUDFLARE_API_TOKEN` env line if unused | optional |
-4. **Rebuild if you edited devcontainer files**: `Dev Containers: Rebuild Container`.
-5. **Install and run:**
-   ```bash
-   npm install
-   cp .env.example .dev.vars   # add keys later; the form works without them in dev
-   npm run dev                 # astro dev --host → forwarded to http://localhost:4321
-   ```
-6. **Verify you're on the fast path:**
-   ```bash
-   df -T /workspaces/<your-repo-name>
-   ```
-   The `Type` column must read **`ext4`** (or `overlay`), **not `9p`**. Then edit a
-   file and confirm the browser hot-reloads on save — if HMR works, file-watching
-   is healthy.
-
-### Reopening the project later
-
-The code lives in the Docker volume, not a host folder, so reopen it via:
-- **`Dev Containers: Open Recent…`**, or
-- the **Remote Explorer** sidebar → **Dev Volumes** → your volume → open.
-
-## Create a new site
-
-1. Complete the container-volume setup above, then:
-   ```bash
-   npm install
-   cp .env.example .dev.vars   # add keys later; the form works without them in dev
-   npm run dev                 # http://localhost:4321
-   ```
-2. **Edit `src/config.ts`** — site name, domain, contact details, nav, social.
-3. **Swap the images** in `/public` (replace `og-image.png`; add your own).
-4. **Build out the page** — add sections to `src/pages/index.astro` (or ask
-   Claude to generate them for the client).
-5. **Set up services + deploy** — follow [SETUP.md](SETUP.md): create a
-   Cloudflare Worker project + Turnstile widget + Postmark sender, add the 7
-   GitHub Actions secrets, update `wrangler.jsonc` `name`, then push to `main`.
-
-## Project layout
+## How it's put together
 
 ```
 src/
-  config.ts            ← per-site settings (edit this first)
-  layouts/Layout.astro ← <head>, SEO meta, JSON-LD slot, font preloads
-  components/          ← Header, Hero, Contact, ContactForm, Footer, HeroCanvas
+  config.ts              site + the three directions (drives the switcher and sitemap)
+  data/ivett.ts          all Ivett content — copy, figures, systems, projects, images
+  layouts/Layout.astro   <head>, SEO, per-page font preloads, the noindex tag
+  components/
+    SiteHeader.astro     one header, three skins; behaviour from scripts/nav.ts
+    SiteFooter.astro     one footer, three skins
+    HeroVideo.astro      poster-first hero video, deferred past load
+    ContactForm.astro    the enquiry form (Turnstile + Postmark)
+    MockupSwitcher.astro the review bar
   pages/
-    index.astro        ← the (lean) homepage
-    privacy.astro      ← privacy scaffold (replace the placeholder copy)
-    404 / success      ← styled error + form thank-you pages
-    api/contact.ts     ← the contact-form Worker endpoint
-    sitemap.xml.ts      ← dynamic sitemap
-    robots.txt.ts      ← dynamic robots
-  scripts/motion.ts    ← the motion toolkit
-  styles/global.css    ← design tokens + base styles
-public/                ← fonts, _headers, .assetsignore, og-image.png
+    index.astro          direction 1  ┐ each page holds its own markup and
+    mockup-2.astro       direction 2  │ styles, so one can be changed without
+    mockup-3.astro       direction 3  ┘ touching the other two
+    404 / success / privacy           review chrome, not any one design
+    api/contact.ts       the form endpoint (the only non-static route)
+  scripts/nav.ts         dropdowns + mobile menu, data-attribute driven
+  styles/global.css      fonts, reset, review chrome, form states
+tools/prune-assets.mjs   post-build: drops images nothing references
+design-brief/            the original .dc.html mockups and source material (not deployed)
 ```
 
-## Motion toolkit
+The three pages share their content but not their CSS. `data/ivett.ts` holds the
+copy and figures once; each page file holds its own layout and look. That's
+deliberate — the point of the exercise is to change one direction without
+disturbing the others.
 
-Opt any element in with a data attribute (all off under `prefers-reduced-motion`):
+## Notes on the build
 
-| Attribute | Effect |
-| --- | --- |
-| `data-reveal` | fade + slide up when scrolled into view |
-| `data-count="100"` (`data-decimals="1"`) | count up to the number |
-| `data-magnetic` | subtle magnetic pull toward the cursor |
-| `data-parallax="-12"` | scroll-scrub parallax (value = % travel) |
-| `data-card-cursor="View project"` | a label that follows the cursor over the element |
+- **No third-party requests except Turnstile.** Fonts are self-hosted and
+  subset, with metric-matched fallbacks (computed with `@capsizecss/metrics`) so
+  nothing shifts when they swap in.
+- **Images** are resized and converted to WebP by sharp at build time, with
+  `srcset`/`sizes` per use. `tools/prune-assets.mjs` then deletes the source
+  originals Astro emits but never links to — about 16 MB a build.
+- **The hero video** shows an optimised poster frame immediately and only
+  fetches the 8 MB file after `load`. Under `prefers-reduced-motion` it isn't
+  fetched at all, and the poster stands in.
+- **JavaScript is ~2–5 KB a page**, all first-party: nav, the scan slideshow on
+  direction 1, the build-up panel on direction 3, the review bar.
+- Everything works with JS off — submenus stay closed, the default build-up
+  layer is the one on show, and every link is a real anchor.
 
-The hero copy animates in automatically, and a scroll-progress bar is added on
-load. The WebGL hero gradient runs on desktop only and pauses off-screen.
+## The enquiry form
 
-## Commands
+The real stack — honeypot + Cloudflare Turnstile + Postmark, `ContactForm.astro`
+→ `src/pages/api/contact.ts`. All three directions style the same component.
 
-```bash
-npm run dev       # dev server
-npm run build     # production build → dist/
-npm run preview   # build + serve via wrangler (closest to production)
-```
+**No secrets are set on this deployment, on purpose.** A submission validates,
+passes Turnstile's test key and reaches the endpoint, which then replies that
+email isn't configured. That's the intended state for a mockup: it proves the
+path without sending anything. To make it send for real, set the five variables
+in [SETUP.md](SETUP.md).
 
-## Notes
+## Indexing
 
-- Fonts (Bricolage Grotesque, Figtree, IBM Plex Mono, Instrument Serif) are
-  open-source (OFL) and self-hosted in `/public/fonts`.
-- The deploy targets Cloudflare **Workers** (static assets + the form function),
-  not Pages. See `wrangler.jsonc` and `.github/workflows/deploy.yml`.
+This site carries the client's own copy on a different domain. If it were
+crawlable it would compete with the pages at ivettbuild.com that hold their
+rankings. So:
+
+- every page sends `<meta name="robots" content="noindex, nofollow">`
+  (src/layouts/Layout.astro)
+- `robots.txt` is `Disallow: /` (src/pages/robots.txt.ts)
+
+Both need reversing when this becomes a real site. `sitemap.xml` is still
+generated and still correct — it just isn't advertised.
+
+## Deploying
+
+Pushing to `main` builds and deploys the Worker
+([.github/workflows/deploy.yml](.github/workflows/deploy.yml)). `wrangler.jsonc`
+binds `ivett.joppawebs.co.uk` as a custom domain, which needs `joppawebs.co.uk`
+to be a zone on the same Cloudflare account — if it isn't, delete the `routes`
+block and attach the domain from the dashboard instead.
+
+Required GitHub Actions secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
+The five contact-form secrets are optional and currently unset (see above).
+
+## What's still open
+
+Carried over from the design brief, and flagged in grey inside the mockups:
+
+- **Construction & project management** has no real copy — the live site
+  duplicates the 3D-modelling text there.
+- The Charters Yard client quote, the project count since 2018, the Loughborough
+  report and the floor span/load table are all still to come from the client.

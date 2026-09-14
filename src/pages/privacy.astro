@@ -1,49 +1,65 @@
 ---
+/**
+ * Privacy notice for this review site.
+ *
+ * Scoped to what this site actually does — it isn't a draft of Ivett's own
+ * policy, and it shouldn't be mistaken for one.
+ */
 import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { SITE, CONTACT } from '../config';
+import { AGENCY } from '../config';
+
+const updated = '14 September 2026';
 ---
 <Layout
   path="/privacy/"
-  title={`Privacy policy - ${SITE.name}`}
-  description={`How ${SITE.name} collects, uses and protects your information.`}
+  title="Privacy · Ivett Design and Build mockups"
+  description="What this review site collects, and what happens to it."
+  bodyClass="rv-page"
 >
-  <Header />
-  <article class="legal">
-    <div class="wrap">
-      <span class="eyebrow">Legal</span>
-      <h1>Privacy policy</h1>
-      <p class="legal-meta">Last updated: <!-- TODO: set date when finalised --> [DATE]</p>
+  <main>
+    <p class="rv-kicker">Legal</p>
+    <h1>Privacy</h1>
+    <p class="rv-meta">Last updated: {updated}</p>
 
-      <!-- TODO: Replace the placeholder sections below with your finalised
-           privacy policy. This is scaffolding, not legal advice. -->
+    <h2>What this site is</h2>
+    <p>
+      This is a private preview holding three homepage designs for Ivett Design and Build. It is
+      operated by <a href={AGENCY.url}>{AGENCY.name}</a>, not by Ivett Design and Build, and it is
+      not the live ivettbuild.com. It is excluded from search engines.
+    </p>
 
-      <h2>Who we are</h2>
-      <p>This website is operated by {SITE.name}. If you have any questions about this policy, contact us at <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.</p>
+    <h2>What it collects</h2>
+    <p>
+      Nothing, until you use one of the enquiry forms inside the mockups. Those forms take the
+      name, email address and message you type. There are no analytics, no advertising and no
+      cookies set by this site.
+    </p>
 
-      <h2>What we collect</h2>
-      <p>When you submit the enquiry form we collect the name, email address, website and message you provide, so we can respond to your enquiry.</p>
+    <h2>What happens to a submission</h2>
+    <p>
+      Submissions are checked by Cloudflare Turnstile (spam protection) and then sent by email
+      through Postmark. The forms are real so you can see the stack working; on this preview no
+      mail credentials are configured, so a submission is validated and then reported back as not
+      set up. Nothing is stored in a database.
+    </p>
 
-      <h2>How we use it</h2>
-      <p>We use the information you send only to reply to your enquiry and discuss potential work. We do not sell your data or add you to marketing lists without your consent.</p>
+    <h2>Hosting</h2>
+    <p>
+      The site is served by Cloudflare, which processes request data such as IP address in order to
+      deliver the page and block abuse.
+    </p>
 
-      <h2>How it’s processed</h2>
-      <p>Form submissions are delivered to us by email via Postmark, and spam protection is provided by Cloudflare Turnstile. [TODO: confirm and expand sub-processors.]</p>
-
-      <h2>Your rights</h2>
-      <p>You can ask us what data we hold about you and request that we delete it at any time by emailing <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.</p>
-    </div>
-  </article>
-  <Footer />
+    <h2>Getting in touch</h2>
+    <p>
+      Ask what's held, or ask for it to be deleted, at
+      <a href={`mailto:${AGENCY.email}`}>{AGENCY.email}</a>.
+    </p>
+  </main>
+  <footer class="rv-foot">
+    Prepared by <a href={AGENCY.url}>{AGENCY.name}</a> · not the live ivettbuild.com
+  </footer>
 </Layout>
 
-<style>
-  .legal{padding:72px 0 96px}
-  .legal .wrap{max-width:760px}
-  .legal h1{font-family:var(--display);font-size:clamp(2.1rem,4.4vw,3rem);font-weight:800;margin:.35em 0 .2em}
-  .legal-meta{font-family:var(--mono);font-size:.82rem;color:var(--ink-mid);margin-bottom:32px}
-  .legal h2{font-size:1.3rem;margin:1.6em 0 .4em}
-  .legal p{margin-bottom:1em;color:var(--ink-2)}
-  .legal a{color:var(--blue)}
+<style is:global>
+  .rv-meta{font-size:13px;color:var(--rv-dim)}
 </style>

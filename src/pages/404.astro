@@ -1,36 +1,47 @@
 ---
+/**
+ * Not found — in the review chrome, not in any of the three designs.
+ * A visitor who mistypes a URL should land somewhere that says plainly what
+ * this site is and offers the three directions.
+ */
 import Layout from '../layouts/Layout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { SITE } from '../config';
+import { MOCKUPS, AGENCY } from '../config';
 ---
 <Layout
   path="/404/"
-  title={`Page not found - ${SITE.name}`}
-  description="The page you were looking for couldn't be found."
+  title="Page not found · Ivett Design and Build mockups"
+  description="That page isn't part of the mockup set."
+  bodyClass="rv-page"
 >
-  <meta slot="head" name="robots" content="noindex" />
+  <main>
+    <p class="rv-kicker">404</p>
+    <h1>That page isn't part of the mockup set.</h1>
+    <p>
+      This site holds three homepage directions for Ivett Design and Build — nothing else is built
+      yet. Links inside the mockups that point at inner pages (case studies, system pages, the
+      insurance page) are deliberately inert: they'd be built for real, but they aren't part of a
+      homepage comparison.
+    </p>
 
-  <Header />
-  <section class="notfound">
-    <div class="wrap notfound-card">
-      <span class="eyebrow" style="justify-content:center">Error 404</span>
-      <h1>This page wandered off.</h1>
-      <p>The page you're looking for doesn't exist, or it may have moved. Let's get you back on track.</p>
-      <div class="notfound-cta">
-        <a class="btn btn-primary" href="/">Back to home</a>
-        <a class="btn btn-ghost" href="/work/">See our work</a>
-        <a class="btn btn-ghost" href="/#contact">Get in touch</a>
-      </div>
+    <h2>The three directions</h2>
+    <ul class="rv-list">
+      {MOCKUPS.map((m) => (
+        <li>
+          <a href={m.path}>{m.n}. {m.name}</a> — {m.blurb}
+        </li>
+      ))}
+    </ul>
+
+    <div class="rv-actions">
+      <a class="rv-btn" href="/">Start at direction 1</a>
     </div>
-  </section>
-  <Footer />
+  </main>
+  <footer class="rv-foot">
+    Prepared by <a href={AGENCY.url}>{AGENCY.name}</a> · not the live ivettbuild.com
+  </footer>
 </Layout>
 
-<style>
-  .notfound{min-height:60vh;display:flex;align-items:center;padding:80px 0}
-  .notfound-card{max-width:580px;text-align:center}
-  .notfound h1{font-family:var(--display);font-size:clamp(2.1rem,4.4vw,3rem);font-weight:800;margin:.3em 0 .35em}
-  .notfound p{color:var(--ink-mid);font-size:1.08rem;max-width:480px;margin:0 auto}
-  .notfound-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:36px}
+<style is:global>
+  .rv-list{margin-top:12px;padding-left:20px;display:grid;gap:8px;max-width:62ch}
+  .rv-list li{padding-left:2px}
 </style>

@@ -143,11 +143,13 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
     );
   }
 
+  // `need` and `website` are optional: the forms on this site don't ask for
+  // them, but the endpoint stays compatible with forms that do.
   const rows: Array<[string, string]> = [
     ['Name', name],
     ['Email', email],
-    ['Need', need || '-'],
-    ['Current website', website || '-'],
+    ...(need ? ([['Need', need]] as Array<[string, string]>) : []),
+    ...(website ? ([['Current website', website]] as Array<[string, string]>) : []),
     ['Message', message || '-'],
   ];
 

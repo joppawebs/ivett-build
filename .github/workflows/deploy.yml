@@ -30,7 +30,9 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          wranglerVersion: '3.99.0'
+          # 3.x can't parse the import attributes in current sharp and fails
+          # the bundle step. 4.59.2 is the version verified against this repo.
+          wranglerVersion: '4.59.2'
 
       # Upload the contact-form secrets to the Worker — but only the ones that
       # are actually set, so the site deploys fine before the form is wired up.
@@ -40,7 +42,7 @@ jobs:
           if [ "$(cat .secrets.json)" = "{}" ]; then
             echo "No contact-form secrets set yet — skipping. Add them later to enable email sending.";
           else
-            npx wrangler@3.99.0 secret bulk .secrets.json;
+            npx wrangler@4.59.2 secret bulk .secrets.json;
           fi
           rm -f .secrets.json
         env:

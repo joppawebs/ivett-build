@@ -1,9 +1,13 @@
-# Astro + Cloudflare starter — setup
+# Setup — the deployment and form stack
 
-A custom Astro site deployed to Cloudflare Workers. This doc covers local
-development, the contact-form stack, and what to configure per project so the
-same process works on every site you build. For the quick "new project"
-overview, see [README.md](README.md).
+This site is deployed to Cloudflare Workers as `ivett-build`, on
+`ivett.joppawebs.co.uk`. This doc covers local development, the contact-form
+stack and the per-site values. For what the site actually is, see
+[README.md](README.md).
+
+> **On this deployment the form secrets are deliberately unset.** The form runs
+> end to end and then reports that email isn't configured — correct behaviour
+> for a mockup. Everything below is what to do when it needs to send for real.
 
 ## Stack
 
@@ -57,9 +61,12 @@ runtime Worker secrets.
 2. **Turnstile** — add a widget in the Cloudflare dashboard for the site's
    domain; copy the **site key** and **secret key**.
 3. **GitHub repo → Settings → Secrets and variables → Actions**, add:
-   - `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
+   - `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` — required to deploy at all
    - `POSTMARK_SERVER_TOKEN`, `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`
    - `TURNSTILE_SECRET_KEY`, `PUBLIC_TURNSTILE_SITE_KEY`
+
+   The deploy workflow uploads only the secrets that are set, so the site
+   deploys fine with just the first two.
 4. **Push to `main`** — the [deploy workflow](.github/workflows/deploy.yml)
    builds the site, uploads the runtime secrets, and deploys the Worker.
 
@@ -68,6 +75,11 @@ account. The web-design equivalent of "Fluent Forms + Postmark", in code.
 
 ## Per-site values
 
-Everything else that changes per project (site name, domain, contact details,
-nav, social links) lives in **`src/config.ts`**. Edit that one file, swap the
-images in `/public`, and you're most of the way there.
+Site name, domain and the list of directions live in **`src/config.ts`**.
+Ivett's own content — copy, performance figures, systems, projects, images —
+lives in **`src/data/ivett.ts`**, shared by all three mockups.
+
+The Worker name is set in `wrangler.jsonc`, which also binds
+`ivett.joppawebs.co.uk` as a custom domain. That requires `joppawebs.co.uk` to
+be a zone on the same Cloudflare account; if it isn't, remove the `routes` block
+and attach the domain from the Cloudflare dashboard.

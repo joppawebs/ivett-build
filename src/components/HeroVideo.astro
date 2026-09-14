@@ -1,0 +1,65 @@
+---
+/**
+ * The hero background video, shared by all three mockups.
+ *
+ * The poster frame is a build-optimised image so the first paint is immediate;
+ * the video file itself is only fetched after `load`, so it never competes with
+ * the hero text. Under prefers-reduced-motion the video is never requested at
+ * all and the poster stands in — which is also what a no-JS visitor gets.
+ */
+import { getImage } from 'astro:assets';
+import posterSrc from '../assets/icf-braced.jpg';
+
+export interface Props {
+  /** The gradient laid over the video, per direction. */
+  overlay: string;
+}
+const { overlay } = Astro.props;
+
+const poster = await getImage({ src: posterSrc, width: 1600, format: 'webp', quality: 70 });
+---
+
+<div class="hv">
+  <video
+    class="hv-video"
+    data-hero-video
+    data-src="/media/hero.mp4"
+    poster={poster.src}
+    muted
+    loop
+    playsinline
+    preload="none"
+    aria-hidden="true"
+    tabindex="-1"
+  ></video>
+  <div class="hv-overlay" style={`background:${overlay}`}></div>
+</div>
+
+<style>
+  .hv{position:absolute;inset:0;overflow:hidden}
+  .hv-video{
+    width:100%;height:100%;object-fit:cover;
+    /* The poster fills the frame until the file arrives. */
+    background-size:cover;background-position:center;
+  }
+  .hv-overlay{position:absolute;inset:0}
+</style>
+
+<script>
+  const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (video && !still) {
+    const load = () => {
+      const src = video.dataset.src;
+      if (!src || video.src) return;
+      video.src = src;
+      video.play().catch(() => {
+        /* Autoplay refused — the poster frame is a perfectly good hero. */
+      });
+    };
+    // Wait for everything else; the poster is already on screen.
+    if (document.readyState === 'complete') load();
+    else window.addEventListener('load', load, { once: true });
+  }
+</script>

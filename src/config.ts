@@ -1,50 +1,69 @@
 /**
- * Per-site configuration — the single source of truth for a new project.
+ * Per-site configuration.
  *
- * Spinning up a new client site: edit the values below, swap the images in
- * /public, set the deploy secrets (see README + SETUP.md), and push.
+ * This deployment is a **client review site**: three homepage directions for
+ * Ivett Design and Build, hosted on a Joppa Webs subdomain so the client can
+ * compare them. It is deliberately noindex / robots-disallowed (see
+ * src/pages/robots.txt.ts and the <meta name="robots"> in Layout.astro) —
+ * it must never compete with ivettbuild.com in search.
  *
- * Everything user-facing (SEO, header, footer, contact, structured data, the
- * sitemap and robots.txt) is driven from here.
+ * The three mockups:
+ *   /           Mockup 1 — "Evolution"   (white, Public Sans)
+ *   /mockup-2/  Mockup 2 — "Bold orange" (near-black, Bricolage Grotesque)
+ *   /mockup-3/  Mockup 3 — "Slate"       (slate blue, Bricolage + JetBrains Mono)
  */
 export const SITE = {
-  /** Brand / business name, used in the logo, titles and structured data. */
-  name: 'Starter Site',
-  /** Production origin, no trailing slash. Used for canonical URLs + sitemap. */
-  url: 'https://example.com',
-  /** Default <title> and the og:title fallback. */
-  title: 'Starter Site — a fast custom website',
-  /** Default meta description / og:description. */
+  /** Used in <title>s, the enquiry email subject and the review chrome. */
+  name: 'Ivett Design and Build',
+  /** Production origin, no trailing slash. */
+  url: 'https://ivett.joppawebs.co.uk',
+  title: 'Ivett Design and Build — homepage directions',
   description:
-    'A fast, custom-built website starter. Replace this description in src/config.ts.',
-  /** Social share image in /public (1200×630 recommended). */
+    'Three homepage directions for Ivett Design and Build, prepared by Joppa Webs. A private review site — not the live ivettbuild.com.',
   ogImage: '/og-image.png',
-  /** <html lang>. */
   locale: 'en-GB',
 } as const;
 
-export const CONTACT = {
-  /** Public contact email shown in the footer and error fallbacks. */
-  email: 'hello@example.com',
-  /** Public phone number (shown in the footer). Leave '' to hide. */
-  phone: '',
+/** Who built this, shown in the review chrome. */
+export const AGENCY = {
+  name: 'Joppa Webs',
+  url: 'https://joppawebs.co.uk',
+  email: 'info@joppawebs.co.uk',
 } as const;
 
-/** Social links — leave a value '' to omit it. */
+export const CONTACT = {
+  /** Ivett's public address — shown inside the mockups. */
+  email: 'info@ivettbuild.com',
+  phone: '01252 967328',
+} as const;
+
 export const SOCIAL = {
   linkedin: '',
-  instagram: '',
+  instagram: 'https://www.instagram.com/ivettbuild',
   x: '',
 } as const;
 
-/** Primary header nav. Use root-relative or hash links. */
-export const NAV: { label: string; href: string }[] = [
-  { label: 'Services', href: '/#services' },
-  { label: 'Contact', href: '/#contact' },
-];
-
-/** The main call-to-action shown in the header. */
-export const CTA = {
-  label: 'Get in touch',
-  href: '/#contact',
-} as const;
+/** The three directions, in order. Drives the review switcher and the sitemap. */
+export const MOCKUPS = [
+  {
+    n: 1,
+    path: '/',
+    name: 'Evolution',
+    blurb:
+      'Closest to the current site: white header, orange logo block and buttons, same section order.',
+  },
+  {
+    n: 2,
+    path: '/mockup-2/',
+    name: 'Bold orange',
+    blurb:
+      'Same palette, more confident: near-black ground, solid orange proof and contact blocks, large display type.',
+  },
+  {
+    n: 3,
+    path: '/mockup-3/',
+    name: 'Slate',
+    blurb:
+      'Off-piste: slate blue with orange as the only accent, and an interactive build-up panel using Ivett’s own section drawings.',
+  },
+] as const;

@@ -1,0 +1,64 @@
+---
+/**
+ * Site footer, in three skins — same links, same legal line, different ground.
+ *
+ * Links other than Instagram point at "#": the pages they'd reach aren't part
+ * of a homepage mockup. (On the client's live site four of these currently go
+ * to the wrong page — worth getting right in the build.)
+ */
+import { COMPANY } from '../data/ivett';
+
+export interface Props {
+  variant: 1 | 2 | 3;
+}
+const { variant } = Astro.props;
+const year = new Date().getFullYear();
+
+const links = [
+  { label: 'Insurance', href: '#' },
+  { label: 'Instagram', href: COMPANY.instagram },
+  { label: 'LinkedIn', href: '#' },
+  { label: 'Facebook', href: '#' },
+  { label: 'Terms', href: '#' },
+  { label: 'Privacy', href: '#' },
+];
+
+const legal =
+  variant === 1
+    ? `© ${year} ${COMPANY.legalName} · Company no. ${COMPANY.companyNo} · VAT ${COMPANY.vatNo}`
+    : variant === 2
+      ? `© ${year} ${COMPANY.legalName} · Company no. ${COMPANY.companyNo}`
+      : `© ${year} ${COMPANY.legalName.toUpperCase()} · ${COMPANY.companyNo}`;
+---
+
+<footer class:list={['ft', `ft-${variant}`]}>
+  <div class="ft-in">
+    <img class="ft-logo" src="/logo.svg" alt="Ivett Design + Build" width="92" height="48" />
+    <nav class="ft-nav" aria-label="Footer">
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+    <span class="ft-legal">{legal}</span>
+  </div>
+</footer>
+
+<style>
+  .ft{font-size:14px}
+  .ft-in{
+    margin:0 auto;max-width:var(--ft-max);padding:36px var(--ft-pad);
+    /* The extra bottom padding keeps the legal line clear of the review bar. */
+    padding-bottom:calc(36px + 56px);
+    display:flex;flex-wrap:wrap;gap:24px 48px;align-items:center;justify-content:space-between;
+  }
+  .ft-logo{height:var(--ft-logo);width:auto}
+  .ft-nav{display:flex;flex-wrap:wrap;gap:8px 24px}
+  .ft-nav a{min-height:44px;display:inline-flex;align-items:center}
+  .ft-nav a:hover{color:var(--orange)}
+  .ft-legal{font-variant-numeric:tabular-nums}
+
+  .ft-1{--ft-max:1320px;--ft-pad:clamp(20px,4vw,48px);--ft-logo:36px;background:var(--char);color:#C9C7C4}
+  .ft-2{--ft-max:1400px;--ft-pad:clamp(20px,4vw,56px);--ft-logo:36px;background:var(--char-deep);color:#B5B2AE}
+  .ft-2 .ft-nav a{font-weight:500}
+  .ft-3{--ft-max:1400px;--ft-pad:clamp(20px,4vw,56px);--ft-logo:32px;background:var(--slate);color:#8FA0B3}
+  .ft-3 .ft-in{padding-top:32px}
+  .ft-3 .ft-legal{font-family:var(--mono);font-size:12px}
+</style>

@@ -1,160 +1,160 @@
+/* ==========================================================================
+   Global stylesheet — fonts, reset, and the "review chrome" that sits around
+   the mockups. Each mockup page carries its own scoped <style> block; nothing
+   design-specific belongs in here.
+   ========================================================================== */
+
+/* ---------- self-hosted fonts (no third-party requests) ----------
+   Public Sans .......... Mockup 1
+   Bricolage Grotesque .. Mockups 2 and 3
+   JetBrains Mono ....... Mockup 3
+   Each is split latin / latin-ext so most visitors download only the first.  */
+
+@font-face{font-family:'Public Sans';font-style:normal;font-weight:100 900;font-display:swap;src:url('/fonts/public-sans-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Public Sans';font-style:normal;font-weight:100 900;font-display:swap;src:url('/fonts/public-sans-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
 @font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:400 800;font-stretch:100%;font-display:swap;src:url('/fonts/bricolage-grotesque-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
 @font-face{font-family:'Bricolage Grotesque';font-style:normal;font-weight:400 800;font-stretch:100%;font-display:swap;src:url('/fonts/bricolage-grotesque-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:'Figtree';font-style:normal;font-weight:400 700;font-display:swap;src:url('/fonts/figtree-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
-@font-face{font-family:'Figtree';font-style:normal;font-weight:400 700;font-display:swap;src:url('/fonts/figtree-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/ibm-plex-mono-400-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
-@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/ibm-plex-mono-400-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/ibm-plex-mono-500-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
-@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/ibm-plex-mono-500-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/ibm-plex-mono-600-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
-@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:600;font-display:swap;src:url('/fonts/ibm-plex-mono-600-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:'Instrument Serif';font-style:italic;font-weight:400;font-display:swap;src:url('/fonts/instrument-serif-italic-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
-@font-face{font-family:'Instrument Serif';font-style:italic;font-weight:400;font-display:swap;src:url('/fonts/instrument-serif-italic-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/jetbrains-mono-400-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400;font-display:swap;src:url('/fonts/jetbrains-mono-400-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/jetbrains-mono-500-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:500;font-display:swap;src:url('/fonts/jetbrains-mono-500-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+/* Metric-matched fallbacks (computed with @capsizecss/metrics) so the swap from
+   fallback to webfont doesn't shift the layout. */
+@font-face{font-family:'Public Sans Fallback';src:local('Arial');size-adjust:99.70%;ascent-override:95.29%;descent-override:22.57%;line-gap-override:0%}
 @font-face{font-family:'Bricolage Fallback';src:local('Arial');size-adjust:105.43%;ascent-override:88.21%;descent-override:25.61%;line-gap-override:0%}
-@font-face{font-family:'Figtree Fallback';src:local('Arial');size-adjust:100.72%;ascent-override:94.32%;descent-override:24.82%;line-gap-override:0%}
-@font-face{font-family:'Plex Mono Fallback';src:local('Courier New');size-adjust:99.98%;ascent-override:102.52%;descent-override:27.50%;line-gap-override:0%}
-@font-face{font-family:'Instrument Fallback';font-style:italic;src:local('Georgia Italic'),local('Georgia');size-adjust:76.49%;ascent-override:129.43%;descent-override:40.53%;line-gap-override:0%}
+@font-face{font-family:'JetBrains Fallback';src:local('Courier New');size-adjust:130.07%;ascent-override:78.42%;descent-override:23.06%;line-gap-override:0%}
+
 :root{
-  --ink:#0D1B2A;
-  --ink-2:#13243A;
-  --ink-mid:#465468;
-  --paper:#FFFFFF;
-  --mist:#EEF3F9;
-  --line:#D8E1EC;
-  --line-dark:rgba(255,255,255,.12);
-  --blue:#2A4CEB;
-  --blue-deep:#1B36C0;
-  --blue-tint:#E4E9FE;
-  --gold:#FFAD33;
-  --green:#27B273;
-  --txt-dim:#9FB4CE;
-  --display:'Bricolage Grotesque','Bricolage Fallback',Georgia,serif;
-  --accent-serif:'Instrument Serif','Instrument Fallback',Georgia,serif;
-  --body:'Figtree','Figtree Fallback',-apple-system,'Segoe UI',sans-serif;
-  --mono:'IBM Plex Mono','Plex Mono Fallback','SF Mono',monospace;
-  --radius:14px;
-  --shadow:0 18px 50px -18px rgba(13,27,42,.25);
+  --sans:'Public Sans','Public Sans Fallback',Helvetica,Arial,sans-serif;
+  --display:'Bricolage Grotesque','Bricolage Fallback',Helvetica,Arial,sans-serif;
+  --mono:'JetBrains Mono','JetBrains Fallback','SF Mono',monospace;
+
+  /* Ivett's palette, sampled from the logo and the current site. */
+  --orange:#F18700;
+  --orange-lt:#FFB15C;
+  --char:#3B3A3A;
+  --char-deep:#1E1D1D;
+  --slate:#1C2530;
+
+  /* Review chrome only — deliberately outside Ivett's palette. */
+  --rv-bg:#EDECEA;
+  --rv-ink:#3B3A3A;
+  --rv-dim:#6B6968;
+  --rv-line:#D9D7D4;
+  --rv-ui:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
 }
+
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;overflow-x:clip}
-/* overflow-x:clip (not hidden) contains stray horizontal overflow without
-   creating a scroll container, so the sticky header keeps working. */
-body{font-family:var(--body);color:var(--ink);background:var(--paper);line-height:1.6;font-size:17px;-webkit-font-smoothing:antialiased;overflow-x:clip}
-img{max-width:100%;display:block}
-a{color:inherit}
-.wrap{max-width:1366px;margin:0 auto;padding:0 24px}
-.eyebrow{font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);font-weight:600;display:inline-flex;align-items:center;gap:.6em}
-.eyebrow::before{content:"";width:22px;height:2px;background:var(--gold)}
-.dark .eyebrow{color:var(--gold)}
-h1,h2,h3{font-family:var(--display);line-height:1.08;letter-spacing:-.01em}
-h2{font-size:clamp(2rem,3.8vw,3.1rem);font-weight:700;margin:.55em 0 .45em}
-.acc{font-family:var(--accent-serif);font-style:italic;font-weight:400;letter-spacing:0}
-.sub{color:var(--ink-mid);max-width:580px;font-size:1.05rem}
-.dark .sub{color:var(--txt-dim)}
-section{padding:128px 0}
-@media(max-width:880px){section{padding:84px 0}}
-.dark{background:var(--ink);color:#EAF1FA}
-.btn{display:inline-flex;align-items:center;gap:.55em;font-family:var(--body);font-weight:700;font-size:1rem;padding:.95em 1.6em;border-radius:999px;text-decoration:none;border:2px solid transparent;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease,background .15s ease,border-color .15s ease}
-.btn svg{transition:transform .15s ease}
-.btn:hover svg{transform:translateX(3px)}
-.btn-primary{background:var(--blue);color:#fff;box-shadow:0 10px 24px -10px rgba(42,76,235,.55)}
-.btn-primary:hover{background:var(--blue-deep);transform:translateY(-2px)}
-.btn-ghost{border-color:var(--line);color:var(--ink)}
-.btn-ghost:hover{border-color:var(--ink);transform:translateY(-2px)}
-.dark .btn-ghost{border-color:var(--line-dark);color:#fff}
-.dark .btn-ghost:hover{border-color:#fff}
-.btn-gold{background:var(--gold);color:var(--ink)}
-.btn-gold:hover{background:#FFBD5C;transform:translateY(-2px)}
-.btn:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
-
-/* ---------- header ---------- */
-header{position:sticky;top:0;z-index:50;background:rgba(13,27,42,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line-dark)}
-.nav{display:flex;align-items:center;justify-content:space-between;height:72px}
-.logo{font-family:var(--display);font-weight:800;font-size:1.35rem;text-decoration:none;letter-spacing:-.02em;color:#fff}
-.nav-links{display:flex;gap:30px;list-style:none}
-.nav-links a{text-decoration:none;font-weight:600;font-size:.95rem;color:#fff}
-.nav .btn{padding:.6em 1.25em;font-size:.92rem}
-@media(max-width:880px){.nav-links{display:none}}
-
-/* ---------- hero ---------- */
-/* Pull the hero up under the (sticky) header so the translucent header sits
-   over the dark hero instead of the white page; padding-top re-opens the gap. */
-.hero{position:relative;overflow:hidden;margin-top:-73px;padding:158px 0 120px;background:
-  radial-gradient(800px 500px at 85% 0%,rgba(42,76,235,.38) 0%,transparent 62%),
-  radial-gradient(600px 420px at 0% 100%,rgba(255,173,51,.14) 0%,transparent 60%),
-  var(--ink)}
-/* WebGL gradient layer - fades in over the CSS gradient once ready (desktop). */
-.hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:0;pointer-events:none;transition:opacity 1s ease}
-.hero-canvas.is-ready{opacity:1}
-.hero-inner{position:relative;z-index:1;max-width:760px}
-.hero h1{font-size:clamp(2.5rem,5.2vw,3.9rem);font-weight:800;margin:.5em 0 .45em;color:#fff}
-.hero h1 .acc{color:var(--gold);font-size:1.04em}
-.hero .lead{font-size:1.15rem;color:var(--txt-dim);max-width:520px;margin-bottom:2em}
-.hero-ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
-@media(max-width:880px){.hero{padding:124px 0 84px}}
-
-/* ---------- contact ---------- */
-.contact{background:
-  radial-gradient(700px 460px at 100% 0%,rgba(42,76,235,.35) 0%,transparent 60%),
-  var(--ink)}
-.contact-grid{display:grid;grid-template-columns:1fr minmax(0,500px);gap:72px;align-items:center}
-.contact h2{color:#fff}
-.contact .acc{color:var(--gold)}
-.c-points{list-style:none;margin-top:28px}
-.c-points li{padding:10px 0 10px 30px;position:relative;color:var(--txt-dim);font-size:.97rem}
-.c-points li::before{content:"";position:absolute;left:0;top:16px;width:16px;height:16px;background:var(--gold);mask:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>') center/contain no-repeat;-webkit-mask:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>') center/contain no-repeat}
-.form-card{background:#fff;border-radius:18px;padding:36px 34px;box-shadow:var(--shadow);color:var(--ink)}
-.form-card h3{font-size:1.3rem;margin-bottom:6px}
-.form-card>p{font-size:.9rem;color:var(--ink-mid);margin-bottom:22px}
-.field{margin-bottom:16px}
-.field label{display:block;font-weight:600;font-size:.85rem;margin-bottom:6px}
-.field input,.field select,.field textarea{width:100%;padding:.8em 1em;border:1.5px solid var(--line);border-radius:10px;font-family:var(--body);font-size:.95rem;background:#fff;color:var(--ink)}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue)}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.form-card .btn{width:100%;justify-content:center;margin-top:6px}
-.form-priv{font-size:.78rem;color:var(--ink-mid);text-align:center;margin-top:14px}
-@media(max-width:880px){.contact-grid{grid-template-columns:1fr;gap:44px}.field-row{grid-template-columns:1fr;gap:0}.form-card{padding:30px 22px}}
-/* The Turnstile widget is a fixed 300px iframe; scale it down on small screens
-   so it never forces horizontal overflow. Origin left keeps it aligned. */
-.cf-turnstile{max-width:100%}
-@media(max-width:440px){.cf-turnstile{transform:scale(.85);transform-origin:left top}}
-
-/* ---------- footer ---------- */
-footer.site{background:var(--ink);border-top:1px solid var(--line-dark);padding:44px 0;color:var(--txt-dim)}
-.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:center;font-size:.9rem}
-.foot nav{display:flex;gap:22px;flex-wrap:wrap}
-.foot a{text-decoration:none;position:relative}
-.foot nav a:hover{color:#fff;text-decoration:underline;text-underline-offset:4px}
+html{overflow-x:clip}
+body{line-height:1.55;-webkit-font-smoothing:antialiased;text-wrap:pretty;overflow-x:clip}
+img,video,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+input,textarea,select,button{font:inherit;color:inherit}
+:where(a,button,input,textarea,select):focus-visible{outline:3px solid var(--orange);outline-offset:2px}
 
 @media(prefers-reduced-motion:reduce){
-  *{transition:none!important;animation:none!important}
-  html{scroll-behavior:auto}
+  *{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
+  html{scroll-behavior:auto!important}
 }
 
-/* ---------- contact form states (progressive enhancement) ---------- */
-.form-status{font-size:.9rem;border-radius:10px;padding:12px 14px;margin-bottom:16px;display:none}
+/* ==========================================================================
+   Review chrome — the bar that lets the client move between the three
+   directions. Intentionally plain and system-font: it must never read as part
+   of any of the mockups.
+   ========================================================================== */
+.rv-bar{
+  position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:900;
+  font-family:var(--rv-ui);font-size:13px;line-height:1.3;
+  display:flex;align-items:stretch;gap:0;
+  background:rgba(28,28,28,.94);color:#fff;
+  border-radius:10px;box-shadow:0 10px 34px rgba(0,0,0,.34);
+  backdrop-filter:blur(8px);
+  max-width:calc(100vw - 24px);
+}
+.rv-bar[hidden]{display:none!important}
+.rv-bar-label{
+  display:none;align-items:center;padding:0 12px 0 14px;white-space:nowrap;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#9A9895;
+  border-right:1px solid rgba(255,255,255,.14);
+}
+@media(min-width:720px){.rv-bar-label{display:flex}}
+.rv-bar-links{display:flex;align-items:stretch}
+.rv-bar-links a{
+  display:flex;align-items:center;gap:7px;padding:11px 13px;
+  color:#D7D5D2;white-space:nowrap;transition:background .15s ease,color .15s ease;
+}
+.rv-bar-links a:hover{background:rgba(255,255,255,.09);color:#fff}
+.rv-bar-links a[aria-current="page"]{color:#fff;background:rgba(241,135,0,.22);box-shadow:inset 0 -2px 0 var(--orange)}
+.rv-bar-n{
+  font-variant-numeric:tabular-nums;font-weight:600;font-size:11px;
+  width:18px;height:18px;flex:none;display:grid;place-items:center;
+  border-radius:4px;background:rgba(255,255,255,.13);
+}
+.rv-bar-links a[aria-current="page"] .rv-bar-n{background:var(--orange);color:#1E1D1D}
+.rv-bar-name{display:none}
+@media(min-width:560px){.rv-bar-name{display:inline}}
+.rv-bar-close{
+  border:0;background:none;color:#8E8C89;cursor:pointer;padding:0 12px;
+  font-size:17px;line-height:1;border-left:1px solid rgba(255,255,255,.14);
+}
+.rv-bar-close:hover{color:#fff}
+
+/* The dot that brings the bar back after it's dismissed. */
+.rv-peek{
+  position:fixed;right:16px;bottom:16px;z-index:900;
+  width:40px;height:40px;border-radius:50%;border:0;cursor:pointer;
+  background:rgba(28,28,28,.92);color:#fff;font-family:var(--rv-ui);
+  font-size:12px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.3);
+}
+.rv-peek[hidden]{display:none!important}
+
+/* ---------- review-chrome pages (404, success, privacy) ---------- */
+.rv-page{
+  min-height:100vh;display:flex;flex-direction:column;
+  background:var(--rv-bg);color:var(--rv-ink);font-family:var(--rv-ui);
+}
+.rv-page main{flex:1;width:100%;max-width:680px;margin:0 auto;padding:clamp(56px,10vw,112px) 20px}
+.rv-kicker{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--rv-dim);margin-bottom:10px}
+.rv-page h1{font-size:clamp(28px,5vw,40px);font-weight:600;letter-spacing:-.02em;line-height:1.1}
+.rv-page h2{font-size:18px;font-weight:600;margin:32px 0 8px}
+.rv-page p{margin-top:14px;max-width:62ch}
+.rv-page a:not(.rv-btn){color:var(--rv-ink);border-bottom:1px solid var(--orange)}
+.rv-page a:not(.rv-btn):hover{color:var(--orange)}
+.rv-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px}
+.rv-btn{
+  display:inline-flex;align-items:center;min-height:46px;padding:0 20px;
+  font-weight:600;font-size:15px;border-radius:4px;
+  background:var(--orange);color:#fff;transition:background .15s ease;
+}
+.rv-btn:hover{background:var(--char)}
+.rv-btn-ghost{background:none;color:var(--rv-ink);border:1.5px solid var(--rv-line)}
+.rv-btn-ghost:hover{background:none;border-color:var(--char);color:var(--char)}
+.rv-foot{
+  border-top:1px solid var(--rv-line);font-size:13px;color:var(--rv-dim);
+  padding:20px;text-align:center;
+}
+
+/* ==========================================================================
+   Enquiry form — shared behaviour classes. The look is set per mockup; only
+   the states that the form's script toggles live here.
+   ========================================================================== */
+.form-status{font-size:14px;padding:12px 14px;margin-bottom:16px;display:none;grid-column:1/-1;border-radius:4px}
 .form-status.is-error{display:block;background:#FDECEC;color:#B42318;border:1px solid #F3C2C2}
 .form-status.is-success{display:block;background:#E7F7EF;color:#10643B;border:1px solid #BFE9D3}
-.field .field-error{display:block;color:#B42318;font-size:.78rem;margin-top:5px;min-height:0}
-.field input[aria-invalid="true"],.field textarea[aria-invalid="true"]{border-color:#D9534F}
+.field-error{display:block;color:#B42318;font-size:13px;font-weight:400;margin-top:5px}
+.field-error:empty{display:none}
+[aria-invalid="true"]{border-color:#D9534F!important}
 .hp-field{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-.btn[aria-busy="true"]{opacity:.7;pointer-events:none}
+[aria-busy="true"]{opacity:.7;pointer-events:none}
+/* Turnstile renders a fixed 300px iframe; keep it from forcing overflow. */
+.cf-turnstile{max-width:100%;grid-column:1/-1}
+@media(max-width:420px){.cf-turnstile{transform:scale(.85);transform-origin:left top}}
 
-/* ---------- motion helpers ---------- */
-/* Sliding underline on nav links */
-.nav-links a{position:relative}
-.nav-links a::after{content:"";position:absolute;left:0;bottom:-4px;width:100%;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:right;transition:transform .3s ease}
-.nav-links a:hover::after{transform:scaleX(1);transform-origin:left}
-
-/* Scroll progress bar (added by motion.ts) */
-.scroll-progress{position:fixed;top:0;left:0;height:3px;width:100%;transform:scaleX(0);transform-origin:0 50%;background:linear-gradient(90deg,var(--blue),var(--gold));z-index:100;pointer-events:none}
-
-/* Label pill that follows the cursor over [data-card-cursor] elements */
-.card-cursor{position:fixed;top:0;left:0;z-index:200;width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;background:var(--blue);color:#fff;font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;line-height:1.3;pointer-events:none;opacity:0;transform:translate(-50%,-50%) scale(.4);transition:opacity .25s ease,transform .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 10px 26px -8px rgba(42,76,235,.7)}
-.card-cursor.is-visible{opacity:1;transform:translate(-50%,-50%) scale(1)}
-@media(max-width:880px){.card-cursor{display:none}}
-
-/* Sheen sweep across primary CTAs on hover */
-.btn-primary,.btn-gold{position:relative;overflow:hidden}
-.btn-primary::after,.btn-gold::after{content:"";position:absolute;top:0;left:-130%;width:55%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg);transition:left .6s ease;pointer-events:none}
-.btn-primary:hover::after,.btn-gold:hover::after{left:150%}
+/* ---------- utilities ---------- */
+.visually-hidden{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
