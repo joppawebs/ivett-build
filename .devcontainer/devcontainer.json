@@ -1,0 +1,74 @@
+{
+  "name": "Claude Code Sandbox",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      "TZ": "${localEnv:TZ:America/Los_Angeles}",
+      "CLAUDE_CODE_VERSION": "latest",
+      "GIT_DELTA_VERSION": "0.18.2",
+      "ZSH_IN_DOCKER_VERSION": "1.2.0"
+    }
+  },
+  "runArgs": [
+    "--cap-add=NET_ADMIN",
+    "--cap-add=NET_RAW"
+  ],
+  // Astro dev server. Bind it with `--host` so it listens on 0.0.0.0,
+  // otherwise VS Code can't forward it out of the container.
+  "forwardPorts": [4321],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "anthropic.claude-code",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "eamodio.gitlens"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "bash",
+            "icon": "terminal-bash"
+          },
+          "zsh": {
+            "path": "zsh"
+          }
+        }
+      }
+    }
+  },
+  "remoteUser": "node",
+  "mounts": [
+    "source=claude-code-bashhistory-${devcontainerId},target=/commandhistory,type=volume",
+    "source=claude-code-config-${devcontainerId},target=/home/node/.claude,type=volume"
+  ],
+  "containerEnv": {
+    "NODE_OPTIONS": "--max-old-space-size=4096",
+    "CLAUDE_CONFIG_DIR": "/home/node/.claude",
+    "POWERLEVEL9K_DISABLE_GITSTATUS": "true",
+    // OPTIONAL (Cloudflare only): passes a Cloudflare API token from the host
+    // into the container for `wrangler`. Delete this line on projects that
+    // don't deploy to Cloudflare.
+    "CLOUDFLARE_API_TOKEN": "${localEnv:CLOUDFLARE_API_TOKEN}"
+  },
+  // NO workspaceMount: the code lives on a Docker named volume created by VS
+  // Code's "Dev Containers: Clone Repository in Container Volume…" command,
+  // which clones into /workspaces/<repo> and manages the mount itself. This is
+  // what keeps us off the slow host filesystem (9p on Windows) so Astro HMR
+  // and file-watching work.
+  //
+  // ⬇️ EDIT PER PROJECT — this ONE line is the only per-clone change.
+  //    VS Code's "Clone Repository in Container Volume…" clones into
+  //    /workspaces/<repo-name> (the repo's own name). Set the path below to
+  //    match. This is a literal because Dev Containers can't interpolate the
+  //    repo name here. If it's wrong the container opens in an empty folder.
+  "workspaceFolder": "/workspaces/astro-cloudflare-starter",
+  "postStartCommand": "sudo /usr/local/bin/init-firewall.sh",
+  "waitFor": "postStartCommand"
+}

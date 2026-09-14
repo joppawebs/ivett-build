@@ -1,0 +1,53 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../config';
+---
+<Layout
+  path="/success/"
+  title={`Thank you - ${SITE.name}`}
+  description="Your enquiry has been sent."
+>
+  <meta slot="head" name="robots" content="noindex" />
+
+  <Header />
+  <section class="success">
+    <div class="wrap success-card">
+      <svg class="checkmark" viewBox="0 0 52 52" aria-hidden="true">
+        <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+        <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+      </svg>
+      <span class="eyebrow" style="justify-content:center">Message sent</span>
+      <h1>Thank you - it's on its way.</h1>
+      <p>We've got your enquiry and we'll reply within one working day. In the meantime, feel free to take another look around.</p>
+      <div class="success-cta">
+        <a class="btn btn-primary" href="/">Back to home</a>
+        <a class="btn btn-ghost" href="/work/">See our work</a>
+      </div>
+    </div>
+  </section>
+  <Footer />
+</Layout>
+
+<style>
+  .success{min-height:64vh;display:flex;align-items:center;padding:80px 0}
+  .success-card{max-width:560px;text-align:center}
+  .success h1{font-family:var(--display);font-size:clamp(2rem,4vw,2.7rem);font-weight:800;margin:.3em 0 .35em}
+  .success p{color:var(--ink-mid);font-size:1.08rem;max-width:460px;margin:0 auto}
+  .success-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:36px}
+
+  /* Animated checkmark - circle draws, then the tick, with a soft scale pop. */
+  .checkmark{width:104px;height:104px;border-radius:50%;display:block;margin:0 auto 24px;stroke-width:3;stroke:var(--green);stroke-miterlimit:10;box-shadow:inset 0 0 0 rgba(39,178,115,0);animation:check-fill .4s ease-in-out .4s forwards, check-scale .3s ease-in-out .9s both}
+  .checkmark__circle{stroke-dasharray:166;stroke-dashoffset:166;stroke-width:3;stroke-miterlimit:10;stroke:var(--green);fill:none;animation:check-stroke .6s cubic-bezier(.65,0,.45,1) forwards}
+  .checkmark__check{transform-origin:50% 50%;stroke-dasharray:48;stroke-dashoffset:48;animation:check-stroke .35s cubic-bezier(.65,0,.45,1) .8s forwards}
+  @keyframes check-stroke{100%{stroke-dashoffset:0}}
+  @keyframes check-scale{0%,100%{transform:none}50%{transform:scale3d(1.1,1.1,1)}}
+  @keyframes check-fill{100%{box-shadow:inset 0 0 0 60px rgba(39,178,115,.08)}}
+
+  /* Respect reduced-motion: skip the draw-in, show the completed mark. */
+  @media (prefers-reduced-motion: reduce){
+    .checkmark{animation:none;box-shadow:inset 0 0 0 60px rgba(39,178,115,.08)}
+    .checkmark__circle,.checkmark__check{animation:none;stroke-dashoffset:0}
+  }
+</style>

@@ -1,0 +1,16 @@
+---
+import HeroCanvas from './HeroCanvas.astro';
+import { CTA } from '../config';
+---
+<section class="hero dark">
+  <HeroCanvas />
+  <div class="wrap hero-inner">
+    <span class="eyebrow">Your eyebrow text</span>
+    <h1>A headline that<br><span class="acc">says what you do</span>.</h1>
+    <p class="lead">A one or two line supporting subheading. Replace this copy in src/components/Hero.astro (or have Claude write it for the client).</p>
+    <div class="hero-ctas">
+      <a class="btn btn-primary" href={CTA.href} data-magnetic>{CTA.label}</a>
+      <a class="btn btn-ghost" href="/#services">Learn more</a>
+    </div>
+  </div>
+</section>

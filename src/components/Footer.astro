@@ -1,0 +1,15 @@
+---
+import { SITE, CONTACT, NAV } from '../config';
+const year = new Date().getFullYear();
+const meta = [CONTACT.email, CONTACT.phone].filter(Boolean).join(' · ');
+---
+<footer class="site">
+  <div class="wrap foot">
+    <a class="logo" href="/" style="font-size:1.1rem">{SITE.name}</a>
+    <nav>
+      {NAV.map((item) => <a href={item.href}>{item.label}</a>)}
+      <a href="/privacy/">Privacy</a>
+    </nav>
+    <span>© {SITE.name} {year}{meta && ` · ${meta}`}</span>
+  </div>
+</footer>

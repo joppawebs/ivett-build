@@ -1,0 +1,25 @@
+{
+  "name": "astro-cloudflare-starter",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev --host",
+    "build": "astro build",
+    "preview": "astro build && wrangler dev",
+    "astro": "astro"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@capsizecss/metrics": "^4.0.0",
+    "playwright": "^1.60.0",
+    "sharp": "^0.35.1",
+    "tweetsodium": "^0.0.4",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^12.6.13",
+    "astro": "^5.18.2",
+    "gsap": "^3.15.0"
+  }
+}

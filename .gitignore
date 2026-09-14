@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+.astro/
+
+# cloudflare / wrangler
+.wrangler/
+.dev.vars
+
+# environment
+.env
+.env.production
+.env.*.local
+
+# claude code local settings (personal, not shared)
+.claude/settings.local.json
+
+# logs & misc
+*.log
+.DS_Store
+lh-report.json

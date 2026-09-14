@@ -1,0 +1,14 @@
+{
+  // Astro's Cloudflare adapter builds a Worker (the dynamic routes, e.g. the
+  // contact form endpoint) plus a folder of static assets. The Worker serves
+  // assets first and only runs code for non-static routes.
+  "name": "astro-cloudflare-starter",
+  "main": "./dist/_worker.js/index.js",
+  "compatibility_date": "2026-06-12",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  },
+  "observability": { "enabled": true }
+}

@@ -1,0 +1,52 @@
+name: Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+        env:
+          # Public Turnstile key is baked into the client bundle at build time.
+          # Empty is fine — the form falls back to Turnstile's test key.
+          PUBLIC_TURNSTILE_SITE_KEY: ${{ secrets.PUBLIC_TURNSTILE_SITE_KEY }}
+
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '3.99.0'
+
+      # Upload the contact-form secrets to the Worker — but only the ones that
+      # are actually set, so the site deploys fine before the form is wired up.
+      - name: Upload runtime secrets (if configured)
+        run: |
+          node -e 'const keys=["POSTMARK_SERVER_TOKEN","CONTACT_TO_EMAIL","CONTACT_FROM_EMAIL","TURNSTILE_SECRET_KEY"];const o={};for(const k of keys)if(process.env[k])o[k]=process.env[k];require("fs").writeFileSync(".secrets.json",JSON.stringify(o));console.log("Secrets to upload:",Object.keys(o).join(", ")||"(none yet)");'
+          if [ "$(cat .secrets.json)" = "{}" ]; then
+            echo "No contact-form secrets set yet — skipping. Add them later to enable email sending.";
+          else
+            npx wrangler@3.99.0 secret bulk .secrets.json;
+          fi
+          rm -f .secrets.json
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          POSTMARK_SERVER_TOKEN: ${{ secrets.POSTMARK_SERVER_TOKEN }}
+          CONTACT_TO_EMAIL: ${{ secrets.CONTACT_TO_EMAIL }}
+          CONTACT_FROM_EMAIL: ${{ secrets.CONTACT_FROM_EMAIL }}
+          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}

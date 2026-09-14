@@ -1,0 +1,49 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE, CONTACT } from '../config';
+---
+<Layout
+  path="/privacy/"
+  title={`Privacy policy - ${SITE.name}`}
+  description={`How ${SITE.name} collects, uses and protects your information.`}
+>
+  <Header />
+  <article class="legal">
+    <div class="wrap">
+      <span class="eyebrow">Legal</span>
+      <h1>Privacy policy</h1>
+      <p class="legal-meta">Last updated: <!-- TODO: set date when finalised --> [DATE]</p>
+
+      <!-- TODO: Replace the placeholder sections below with your finalised
+           privacy policy. This is scaffolding, not legal advice. -->
+
+      <h2>Who we are</h2>
+      <p>This website is operated by {SITE.name}. If you have any questions about this policy, contact us at <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.</p>
+
+      <h2>What we collect</h2>
+      <p>When you submit the enquiry form we collect the name, email address, website and message you provide, so we can respond to your enquiry.</p>
+
+      <h2>How we use it</h2>
+      <p>We use the information you send only to reply to your enquiry and discuss potential work. We do not sell your data or add you to marketing lists without your consent.</p>
+
+      <h2>How it’s processed</h2>
+      <p>Form submissions are delivered to us by email via Postmark, and spam protection is provided by Cloudflare Turnstile. [TODO: confirm and expand sub-processors.]</p>
+
+      <h2>Your rights</h2>
+      <p>You can ask us what data we hold about you and request that we delete it at any time by emailing <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.</p>
+    </div>
+  </article>
+  <Footer />
+</Layout>
+
+<style>
+  .legal{padding:72px 0 96px}
+  .legal .wrap{max-width:760px}
+  .legal h1{font-family:var(--display);font-size:clamp(2.1rem,4.4vw,3rem);font-weight:800;margin:.35em 0 .2em}
+  .legal-meta{font-family:var(--mono);font-size:.82rem;color:var(--ink-mid);margin-bottom:32px}
+  .legal h2{font-size:1.3rem;margin:1.6em 0 .4em}
+  .legal p{margin-bottom:1em;color:var(--ink-2)}
+  .legal a{color:var(--blue)}
+</style>
